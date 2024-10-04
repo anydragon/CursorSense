@@ -1,71 +1,70 @@
-# cursorsense README
+# CursorSense
 
-This is the README for your extension "cursorsense". After writing up a brief description, we recommend including the following sections.
+CursorSense enhances your coding experience by providing instant information as you type. Get real-time hover details, definitions, and reference counts for multiple languages without manual hovering.
 
 ## Features
 
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
-
-For example if there is an image subfolder under your extension project workspace:
-
-\!\[feature X\]\(images/feature-x.png\)
-
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
+- **Auto-display of hover information**: See details about variables, functions, and more as you move your cursor.
+- **Quick access to definitions**: Instantly view where a symbol is defined.
+- **Reference counting**: Know how many times a symbol is used in your code.
+- **Multi-language support**: Works with JavaScript, TypeScript, Python, C#, and more.
+- **Customizable highlighting**: Choose how highlighted elements appear in your code.
 
 ## Requirements
 
-If you have any requirements or dependencies, add a section describing those and how to install and configure them.
+- Visual Studio Code version 1.60.0 or higher
 
 ## Extension Settings
 
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
-
-For example:
-
 This extension contributes the following settings:
 
-* `myExtension.enable`: Enable/disable this extension.
-* `myExtension.thing`: Set to `blah` to do something.
+* `cursorSense.enable`: Enable/disable CursorSense.
+* `cursorSense.delay`: Set the delay (in milliseconds) before showing information.
+* `cursorSense.languages`: List of languages where CursorSense is active.
+* `cursorSense.showDefinition`: Enable/disable showing definitions.
+* `cursorSense.showReferences`: Enable/disable showing reference counts.
+* `cursorSense.highlightStyle`: Set the style of highlighting (`"background"`, `"underline"`, or `"border"`).
+
+## Usage
+
+1. Open a file in a supported language.
+2. Move your cursor over different parts of your code.
+3. Information will automatically appear after the set delay.
+4. Use the command palette (`Ctrl+Shift+P` or `Cmd+Shift+P`) and search for "CursorSense" to access additional commands.
 
 ## Known Issues
 
-Calling out known issues can help limit users opening duplicate issues against your extension.
+- May conflict with other extensions that modify hover behavior.
+- Performance impact on very large files.
 
 ## Release Notes
 
-Users appreciate release notes as you update your extension.
-
 ### 1.0.0
 
-Initial release of ...
+Initial release of CursorSense
+
+- Basic hover functionality
+- Support for JavaScript, TypeScript, Python, and C#
+- Customizable delay and highlighting
 
 ### 1.0.1
 
-Fixed issue #.
+- Fixed issue with language detection
+- Improved performance for large files
 
 ### 1.1.0
 
-Added features X, Y, and Z.
+- Added reference counting feature
+- Expanded language support
 
----
+## Feedback and Contributions
 
-## Following extension guidelines
-
-Ensure that you've read through the extensions guidelines and follow the best practices for creating your extension.
-
-* [Extension Guidelines](https://code.visualstudio.com/api/references/extension-guidelines)
-
-## Working with Markdown
-
-You can author your README using Visual Studio Code. Here are some useful editor keyboard shortcuts:
-
-* Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux).
-* Toggle preview (`Shift+Cmd+V` on macOS or `Shift+Ctrl+V` on Windows and Linux).
-* Press `Ctrl+Space` (Windows, Linux, macOS) to see a list of Markdown snippets.
+- File bugs, feature requests in [GitHub Issues](https://github.com/yourusername/CursorSense/issues)
+- Leave a review on the [VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=yourusername.cursorsense)
 
 ## For more information
 
-* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
+- [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
+- [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
 
-**Enjoy!**
+**Enjoy coding with CursorSense!**
