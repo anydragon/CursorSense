@@ -14,6 +14,13 @@ CursorSense enhances your coding experience by providing instant information as 
 
 - Visual Studio Code version 1.60.0 or higher
 
+## Build
+
+```
+yo code
+npx vsce package
+```
+
 ## Extension Settings
 
 This extension contributes the following settings:
@@ -39,7 +46,7 @@ This extension contributes the following settings:
 
 ## Release Notes
 
-### 1.0.0
+### 0.0.1
 
 Initial release of CursorSense
 
@@ -47,12 +54,12 @@ Initial release of CursorSense
 - Support for JavaScript, TypeScript, Python, and C#
 - Customizable delay and highlighting
 
-### 1.0.1
+### 0.0.2
 
 - Fixed issue with language detection
 - Improved performance for large files
 
-### 1.1.0
+### 0.1.0
 
 - Added reference counting feature
 - Expanded language support

@@ -2,7 +2,8 @@
   "name": "cursorsense",
   "displayName": "CursorSense",
   "description": "Instantly view code information (hover details, definitions, references) as you type, boosting productivity across multiple languages without manual hovering.",
-  "version": "0.0.1",
+  "license": "MIT",
+  "version": "0.1.0",
   "engines": {
     "vscode": "^1.94.0"
   },
