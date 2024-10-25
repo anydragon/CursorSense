@@ -16,7 +16,7 @@ CursorSense enhances your coding experience by providing instant information as 
 
 ## Build
 
-```
+```shell
 yo code
 npx vsce package
 ```
@@ -25,12 +25,12 @@ npx vsce package
 
 This extension contributes the following settings:
 
-* `cursorSense.enable`: Enable/disable CursorSense.
-* `cursorSense.delay`: Set the delay (in milliseconds) before showing information.
-* `cursorSense.languages`: List of languages where CursorSense is active.
-* `cursorSense.showDefinition`: Enable/disable showing definitions.
-* `cursorSense.showReferences`: Enable/disable showing reference counts.
-* `cursorSense.highlightStyle`: Set the style of highlighting (`"background"`, `"underline"`, or `"border"`).
+- `cursorSense.enable`: Enable/disable CursorSense.
+- `cursorSense.delay`: Set the delay (in milliseconds) before showing information.
+- `cursorSense.languages`: List of languages where CursorSense is active.
+- `cursorSense.showDefinition`: Enable/disable showing definitions.
+- `cursorSense.showReferences`: Enable/disable showing reference counts.
+- `cursorSense.highlightStyle`: Set the style of highlighting (`"background"`, `"underline"`, or `"border"`).
 
 ## Usage
 
