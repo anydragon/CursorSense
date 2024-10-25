@@ -10,16 +10,40 @@
   "categories": [
     "Other"
   ],
-  "activationEvents": [],
   "main": "./out/extension.js",
   "contributes": {
-    "commands": [
-      {
-        "command": "cursorsense.helloWorld",
-        "title": "Hello World"
+    "configuration": {
+      "title": "Cursor Hover",
+      "properties": {
+        "cursorHover.delay": {
+          "type": "number",
+          "default": 300,
+          "description": "Delay in milliseconds before showing hover"
+        },
+        "cursorHover.languages": {
+          "type": "array",
+          "default": [
+            "aspnetcorerazor",
+            "csharp",
+            "dotnet",
+            "go",
+            "javascript",
+            "json",
+            "lua",
+            "markdown",
+            "php",
+            "python",
+            "rust",
+            "typescript"
+          ],
+          "description": "Languages that enable cursor hover"
+        }
       }
-    ]
+    }
   },
+  "activationEvents": [
+    "onLanguage"
+  ],
   "scripts": {
     "vscode:prepublish": "yarn run compile",
     "compile": "tsc -p ./",

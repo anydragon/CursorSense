@@ -1,7 +1,6 @@
 import * as vscode from 'vscode';
 
 interface CursorHoverConfiguration {
-  enabled: boolean;
   delay: number;
   languages: string[];
 }
@@ -14,7 +13,6 @@ export function activate(context: vscode.ExtensionContext) {
   function loadConfiguration(): void {
     const conf = vscode.workspace.getConfiguration('cursorHover');
     config = {
-      enabled: conf.get('enabled', true),
       delay: conf.get('delay', 300),
       languages: conf.get('languages', [
         'aspnetcorerazor',
@@ -34,7 +32,7 @@ export function activate(context: vscode.ExtensionContext) {
   }
 
   function updateHoverOnCursorMove() {
-    if (!activeEditor || !config.enabled) {
+    if (!activeEditor) {
       return;
     }
 
@@ -44,7 +42,6 @@ export function activate(context: vscode.ExtensionContext) {
     }
 
     const position = activeEditor.selection.active;
-
     vscode.commands
       .executeCommand('editor.action.showHover', {
         position: position,
@@ -52,7 +49,6 @@ export function activate(context: vscode.ExtensionContext) {
       })
       .then(
         () => {
-          // 호버가 표시되면 상태 바를 업데이트합니다
           vscode.window.setStatusBarMessage('Hover information displayed', 2000);
         },
         (error) => {
@@ -101,14 +97,6 @@ export function activate(context: vscode.ExtensionContext) {
     },
     null,
     context.subscriptions
-  );
-
-  context.subscriptions.push(
-    vscode.commands.registerCommand('cursorHover.toggle', () => {
-      config.enabled = !config.enabled;
-      vscode.workspace.getConfiguration('cursorHover').update('enabled', config.enabled, true);
-      vscode.window.showInformationMessage(`Cursor Hover ${config.enabled ? 'enabled' : 'disabled'}`);
-    })
   );
 
   loadConfiguration();
