@@ -31,7 +31,7 @@ export function activate(context: vscode.ExtensionContext) {
     };
   }
 
-  function updateHoverOnCursorMove() {
+  async function updateHoverOnCursorMove() {
     if (!activeEditor) {
       return;
     }
@@ -42,19 +42,29 @@ export function activate(context: vscode.ExtensionContext) {
     }
 
     const position = activeEditor.selection.active;
-    vscode.commands
-      .executeCommand('editor.action.showHover', {
-        position: position,
-        range: new vscode.Range(position, position),
-      })
-      .then(
-        () => {
-          vscode.window.setStatusBarMessage('Hover information displayed', 2000);
-        },
-        (error) => {
-          console.error('Failed to show hover:', error);
-        }
+
+    // 현재 위치의 단어 범위를 가져옵니다
+    const wordRange = activeEditor.document.getWordRangeAtPosition(position);
+    if (!wordRange) {
+      return; // 커서가 단어 위에 없으면 중단
+    }
+
+    try {
+      // hover 제공자를 직접 호출
+      const hovers = await vscode.commands.executeCommand<vscode.Hover[]>(
+        'vscode.executeHoverProvider',
+        document.uri,
+        position
       );
+
+      if (hovers && hovers.length > 0) {
+        // hover 정보가 있을 때만 showHover 실행
+        await vscode.commands.executeCommand('editor.action.showHover');
+        vscode.window.setStatusBarMessage('Hover information displayed', 2000);
+      }
+    } catch (error) {
+      console.error('Failed to show hover:', error);
+    }
   }
 
   function triggerUpdateHoverOnCursorMove(immediate: boolean = false) {
@@ -62,41 +72,39 @@ export function activate(context: vscode.ExtensionContext) {
       clearTimeout(timeout);
       timeout = undefined;
     }
+
     if (immediate) {
       updateHoverOnCursorMove();
     } else {
-      timeout = setTimeout(updateHoverOnCursorMove, config.delay);
+      timeout = setTimeout(() => updateHoverOnCursorMove(), config.delay);
     }
   }
 
-  vscode.window.onDidChangeTextEditorSelection(
-    (event) => {
+  // 커서 이동 이벤트 리스너
+  context.subscriptions.push(
+    vscode.window.onDidChangeTextEditorSelection((event) => {
       if (activeEditor && event.textEditor === activeEditor) {
         triggerUpdateHoverOnCursorMove();
       }
-    },
-    null,
-    context.subscriptions
+    })
   );
 
-  vscode.window.onDidChangeActiveTextEditor(
-    (editor) => {
+  // 활성 에디터 변경 이벤트 리스너
+  context.subscriptions.push(
+    vscode.window.onDidChangeActiveTextEditor((editor) => {
       if (editor) {
         activeEditor = editor;
       }
-    },
-    null,
-    context.subscriptions
+    })
   );
 
-  vscode.workspace.onDidChangeConfiguration(
-    (event) => {
+  // 설정 변경 이벤트 리스너
+  context.subscriptions.push(
+    vscode.workspace.onDidChangeConfiguration((event) => {
       if (event.affectsConfiguration('cursorHover')) {
         loadConfiguration();
       }
-    },
-    null,
-    context.subscriptions
+    })
   );
 
   loadConfiguration();
