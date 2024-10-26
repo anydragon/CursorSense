@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
 
 interface CursorHoverConfiguration {
+  enabled: boolean;
   delay: number;
   languages: string[];
 }
@@ -9,11 +10,11 @@ export function activate(context: vscode.ExtensionContext) {
   let timeout: NodeJS.Timeout | undefined = undefined;
   let activeEditor = vscode.window.activeTextEditor;
   let config: CursorHoverConfiguration;
-  let isHoverVisible = false;
 
   function loadConfiguration(): void {
     const conf = vscode.workspace.getConfiguration('cursorHover');
     config = {
+      enabled: conf.get('enabled', true),
       delay: conf.get('delay', 300),
       languages: conf.get('languages', [
         'aspnetcorerazor',
@@ -32,8 +33,8 @@ export function activate(context: vscode.ExtensionContext) {
     };
   }
 
-  async function updateHoverOnCursorMove() {
-    if (!activeEditor) {
+  function updateHoverOnCursorMove() {
+    if (!activeEditor || !config.enabled) {
       return;
     }
 
@@ -43,46 +44,21 @@ export function activate(context: vscode.ExtensionContext) {
     }
 
     const position = activeEditor.selection.active;
-    const wordRange = activeEditor.document.getWordRangeAtPosition(position);
 
-    if (!wordRange) {
-      return;
-    }
-
-    try {
-      // hover 제공자를 직접 호출
-      const hovers = await vscode.commands.executeCommand<vscode.Hover[]>(
-        'vscode.executeHoverProvider',
-        document.uri,
-        position
+    vscode.commands
+      .executeCommand('editor.action.showHover', {
+        position: position,
+        range: new vscode.Range(position, position),
+      })
+      .then(
+        () => {
+          // 호버가 표시되면 상태 바를 업데이트합니다
+          vscode.window.setStatusBarMessage('Hover information displayed', 2000);
+        },
+        (error) => {
+          console.error('Failed to show hover:', error);
+        }
       );
-
-      if (hovers && hovers.length > 0 && !isHoverVisible) {
-        isHoverVisible = true;
-
-        // 포커스를 유지하기 위한 현재 선택 영역 저장
-        const currentSelection = activeEditor.selection;
-
-        // hover 표시
-        await vscode.commands.executeCommand('editor.action.showHover');
-
-        // 에디터에 포커스 강제 복원
-        await vscode.window.showTextDocument(document, {
-          selection: currentSelection,
-          preserveFocus: true,
-        });
-
-        vscode.window.setStatusBarMessage('Hover information displayed', 2000);
-
-        // 일정 시간 후 hover visible 상태 리셋
-        // setTimeout(() => {
-        isHoverVisible = false;
-        // }, 0);
-      }
-    } catch (error) {
-      console.error('Failed to show hover:', error);
-      isHoverVisible = false;
-    }
   }
 
   function triggerUpdateHoverOnCursorMove(immediate: boolean = false) {
@@ -90,38 +66,48 @@ export function activate(context: vscode.ExtensionContext) {
       clearTimeout(timeout);
       timeout = undefined;
     }
-
     if (immediate) {
       updateHoverOnCursorMove();
     } else {
-      timeout = setTimeout(() => updateHoverOnCursorMove(), config.delay);
+      timeout = setTimeout(updateHoverOnCursorMove, config.delay);
     }
   }
 
-  // 커서 이동 이벤트 리스너
-  context.subscriptions.push(
-    vscode.window.onDidChangeTextEditorSelection((event) => {
+  vscode.window.onDidChangeTextEditorSelection(
+    (event) => {
       if (activeEditor && event.textEditor === activeEditor) {
         triggerUpdateHoverOnCursorMove();
       }
-    })
+    },
+    null,
+    context.subscriptions
   );
 
-  // 활성 에디터 변경 이벤트 리스너
-  context.subscriptions.push(
-    vscode.window.onDidChangeActiveTextEditor((editor) => {
+  vscode.window.onDidChangeActiveTextEditor(
+    (editor) => {
       if (editor) {
         activeEditor = editor;
       }
-    })
+    },
+    null,
+    context.subscriptions
   );
 
-  // 설정 변경 이벤트 리스너
-  context.subscriptions.push(
-    vscode.workspace.onDidChangeConfiguration((event) => {
+  vscode.workspace.onDidChangeConfiguration(
+    (event) => {
       if (event.affectsConfiguration('cursorHover')) {
         loadConfiguration();
       }
+    },
+    null,
+    context.subscriptions
+  );
+
+  context.subscriptions.push(
+    vscode.commands.registerCommand('cursorHover.toggle', () => {
+      config.enabled = !config.enabled;
+      vscode.workspace.getConfiguration('cursorHover').update('enabled', config.enabled, true);
+      vscode.window.showInformationMessage(`Cursor Hover ${config.enabled ? 'enabled' : 'disabled'}`);
     })
   );
 
