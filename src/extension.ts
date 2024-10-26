@@ -9,6 +9,7 @@ export function activate(context: vscode.ExtensionContext) {
   let timeout: NodeJS.Timeout | undefined = undefined;
   let activeEditor = vscode.window.activeTextEditor;
   let config: CursorHoverConfiguration;
+  let isHoverVisible = false;
 
   function loadConfiguration(): void {
     const conf = vscode.workspace.getConfiguration('cursorHover');
@@ -42,11 +43,10 @@ export function activate(context: vscode.ExtensionContext) {
     }
 
     const position = activeEditor.selection.active;
-
-    // 현재 위치의 단어 범위를 가져옵니다
     const wordRange = activeEditor.document.getWordRangeAtPosition(position);
+
     if (!wordRange) {
-      return; // 커서가 단어 위에 없으면 중단
+      return;
     }
 
     try {
@@ -57,13 +57,31 @@ export function activate(context: vscode.ExtensionContext) {
         position
       );
 
-      if (hovers && hovers.length > 0) {
-        // hover 정보가 있을 때만 showHover 실행
+      if (hovers && hovers.length > 0 && !isHoverVisible) {
+        isHoverVisible = true;
+
+        // 포커스를 유지하기 위한 현재 선택 영역 저장
+        const currentSelection = activeEditor.selection;
+
+        // hover 표시
         await vscode.commands.executeCommand('editor.action.showHover');
+
+        // 에디터에 포커스 강제 복원
+        await vscode.window.showTextDocument(document, {
+          selection: currentSelection,
+          preserveFocus: true,
+        });
+
         vscode.window.setStatusBarMessage('Hover information displayed', 2000);
+
+        // 일정 시간 후 hover visible 상태 리셋
+        // setTimeout(() => {
+        isHoverVisible = false;
+        // }, 0);
       }
     } catch (error) {
       console.error('Failed to show hover:', error);
+      isHoverVisible = false;
     }
   }
 
