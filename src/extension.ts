@@ -53,7 +53,7 @@ export function activate(context: vscode.ExtensionContext) {
       .then(
         () => {
           // 호버가 표시되면 상태 바를 업데이트합니다
-          vscode.window.setStatusBarMessage('Hover information displayed', 2000);
+          // vscode.window.setStatusBarMessage('Hover information displayed', 2000);
         },
         (error) => {
           console.error('Failed to show hover:', error);
